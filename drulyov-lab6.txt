@@ -1,0 +1,52 @@
+===RSYSLOG Status===
+
+● rsyslog.service - System Logging Service
+   Loaded: loaded (/usr/lib/systemd/system/rsyslog.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2020-11-19 22:10:33 EST; 3 days ago
+     Docs: man:rsyslogd(8)
+           https://www.rsyslog.com/doc/
+ Main PID: 1045 (rsyslogd)
+    Tasks: 4 (limit: 11479)
+   Memory: 3.5M
+   CGroup: /system.slice/rsyslog.service
+           └─1045 /usr/sbin/rsyslogd -n
+
+Nov 19 22:10:33 rns.drulyov.com systemd[1]: Starting System Logging Service...
+Nov 19 22:10:33 rns.drulyov.com systemd[1]: Started System Logging Service.
+Nov 19 22:10:33 rns.drulyov.com rsyslogd[1045]: [origin software="rsyslogd" swVersion="8.1911.0-3.el8" x-pid="1045" x-info="https://www.rsyslog.com"] start
+Nov 19 22:10:34 rns.drulyov.com rsyslogd[1045]: imjournal: journal files changed, reloading...  [v8.1911.0-3.el8 try https://www.rsyslog.com/e/0 ]
+Nov 22 03:35:01 rns.drulyov.com rsyslogd[1045]: [origin software="rsyslogd" swVersion="8.1911.0-3.el8" x-pid="1045" x-info="https://www.rsyslog.com"] rsyslogd was HUPed
+
+===SELinux Status===
+
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      31
+
+===IPTables===
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     tcp  --  172.16.0.1           anywhere             tcp dpt:ssh
+ACCEPT     tcp  --  192.168.27.0/24      anywhere             tcp dpt:ssh
+ACCEPT     udp  --  anywhere             anywhere             udp dpt:domain
+ACCEPT     udp  --  192.168.27.0/24      rns.drulyov.com      udp dpt:syslog
+ACCEPT     all  --  anywhere             anywhere            
+LOG        tcp  --  anywhere             anywhere             tcp dpt:ssh LOG level warning prefix "External SSH Traffic: "
+REJECT     tcp  --  anywhere             anywhere             tcp dpt:ssh reject-with icmp-port-unreachable
+LOG        udp  --  anywhere             anywhere             LOG level warning prefix "Other UDP Traffic: "
+LOG        all  --  anywhere             anywhere             LOG level warning prefix "OTHER Traffic: "
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
